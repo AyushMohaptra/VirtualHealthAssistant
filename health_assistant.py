@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-"""Simple Health Assistant - Ultra Compact Version"""
 import tkinter as tk
 from tkinter import messagebox
 
@@ -130,19 +128,19 @@ class HealthAssistant:
             text += "\n\n"
         self.update_results(text)
     
+    def show_tips(self):
+        """Show smart health tips (automatically personalized or general)"""
+        result_message = self.health_tips.show_smart_tips()
+        self.update_results(result_message)
+    
     def show_stats(self):
         """Show database statistics"""
         stats = self.database.get_database_stats()
-        text = f"DATABASE STATS:\n\nTotal Diagnoses: {stats['total_diagnoses']}\n"
-        text += f"Most Common: {stats['most_common']}\nDatabase Size: {stats['database_size']} bytes\n"
-        text += f"Location: {self.database.db_path}\n\nAll data permanently saved!"
+        
+        text = f"DATABASE STATISTICS\n\nDiagnosis Records:\nTotal Diagnoses: {stats['total_diagnoses']}\n"
+        text += f"Most Common: {stats['most_common']}\n\n"
+        text += f"Database Size: {stats['database_size']} bytes\nLocation: {self.database.db_path}\n\nAll data permanently saved!"
         self.update_results(text)
-    
-    def show_tips(self):
-        """Show health tips"""
-        tips = self.health_tips.get_general_tips()
-        self.health_tips.show_tips_in_browser(tips, "Health Tips")
-        self.update_results("Health tips opened in browser!")
     
     def update_results(self, text):
         """Update results display"""

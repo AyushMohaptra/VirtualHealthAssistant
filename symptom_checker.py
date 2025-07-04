@@ -1,5 +1,4 @@
-#!/usr/bin/env python3
-"""Symptom Checker Module"""
+
 
 class SymptomChecker:
     def __init__(self):

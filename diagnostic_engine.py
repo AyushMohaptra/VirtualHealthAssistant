@@ -1,5 +1,4 @@
-#!/usr/bin/env python3
-"""Diagnostic Engine Module using Decision Tree"""
+
 
 from sklearn.tree import DecisionTreeClassifier
 import numpy as np

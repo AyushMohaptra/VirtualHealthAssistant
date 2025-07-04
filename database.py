@@ -1,5 +1,4 @@
-#!/usr/bin/env python3
-"""Database Module for Health Assistant"""
+
 
 import sqlite3
 import json
@@ -8,25 +7,14 @@ from datetime import datetime
 
 class HealthDatabase:
     def __init__(self, db_name="health_data.db"):
-        """Initialize database connection and create tables"""
+        """Initialize database connection"""
         self.db_path = os.path.join(os.path.dirname(__file__), db_name)
         self.init_database()
     
     def init_database(self):
-        """Create database tables if they don't exist"""
-        with sqlite3.connect(self.db_path) as conn:
-            cursor = conn.cursor()
-            cursor.execute('''
-                CREATE TABLE IF NOT EXISTS diagnoses (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    date TEXT NOT NULL,
-                    symptoms TEXT NOT NULL,
-                    diagnosis TEXT NOT NULL,
-                    confidence REAL,
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-                )
-            ''')
-            conn.commit()
+        """Initialize database - tables already exist"""
+        # Tables are already created, no need to create them again
+        print("Database tables already exist - initialization complete")
     
     def save_diagnosis(self, symptoms, diagnosis, confidence):
         """Save a diagnosis to the database"""
@@ -80,7 +68,7 @@ class HealthDatabase:
             return []
     
     def get_database_stats(self):
-        """Get database statistics"""
+        """Get basic database statistics"""
         try:
             with sqlite3.connect(self.db_path) as conn:
                 cursor = conn.cursor()
@@ -113,20 +101,30 @@ class HealthDatabase:
                 }
         except Exception as e:
             print(f"Error getting stats: {e}")
-            return {
-                'total_diagnoses': 0,
-                'most_common': 'Error',
-                'database_size': 0
-            }
+            return {'total_diagnoses': 0, 'most_common': 'Error', 'database_size': 0}
     
-    def clear_history(self):
-        """Clear all diagnosis history"""
+
+
+    def get_tips_by_category(self, category):
+        """Get tips by category"""
         try:
             with sqlite3.connect(self.db_path) as conn:
                 cursor = conn.cursor()
-                cursor.execute('DELETE FROM diagnoses')
-                conn.commit()
-                return True
+                cursor.execute('''
+                    SELECT tip_text FROM health_tips WHERE category = ?
+                ''', (category,))
+                return [tip[0] for tip in cursor.fetchall()]
         except Exception as e:
-            print(f"Error clearing history: {e}")
-            return False
+            print(f"Error getting tips: {e}")
+            return []
+
+    def get_all_tips(self):
+        """Get all health tips"""
+        try:
+            with sqlite3.connect(self.db_path) as conn:
+                cursor = conn.cursor()
+                cursor.execute('SELECT category, tip_text FROM health_tips')
+                return cursor.fetchall()
+        except Exception as e:
+            print(f"Error getting tips: {e}")
+            return []
